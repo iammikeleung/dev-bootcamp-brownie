@@ -12,43 +12,23 @@ contract PriceExercise is ChainlinkClient {
     address private oracle;
     bytes32 private jobId;
     uint256 private fee;
-    AggregatorV3Interface internal priceFeed;
-    int256 public storedPrice;
     bool public priceFeedGreater;
- 
-    /**
-     * Network: Kovan
-     * Chainlink - 0x2f90A6D021db21e1B2A077c5a37B3C7E75D15b7e
-     * Chainlink - 29fa9aa13bf1468788b7cc4a500a45b8
-     * Fee: 0.1 LINK
-     */
-      constructor(address _oracle, string memory _jobId, uint256 _fee, address _link, address _priceFeed) public {
+
+    AggregatorV3Interface internal priceFeed;
+
+
+    constructor(address _oracle, string memory _jobId, uint256 _fee, address _link, address _priceFeed) public {
         if (_link == address(0)) {
             setPublicChainlinkToken();
         } else {
             setChainlinkToken(_link);
         }
-        // oracle = 0x2f90A6D021db21e1B2A077c5a37B3C7E75D15b7e;
-        // jobId = "29fa9aa13bf1468788b7cc4a500a45b8";
-        // fee = 0.1 * 10 ** 18; // 0.1 LINK
         oracle = _oracle;
         jobId = stringToBytes32(_jobId);
         fee = _fee;
         priceFeed = AggregatorV3Interface(_priceFeed);
     }
  
-    /**
-     * Create a Chainlink request to retrieve API response, find the target
-     * data, then multiply by 1000000000000000000 (to remove decimal places from data).
-     ************************************************************************************
-     *                                    STOP!                                         *
-     *         THIS FUNCTION WILL FAIL IF THIS CONTRACT DOES NOT OWN LINK               *
-     *         ----------------------------------------------------------               *
-     *         Learn how to obtain testnet LINK and fund this contract:                 *
-     *         ------- https://docs.chain.link/docs/acquire-link --------               *
-     *         ---- https://docs.chain.link/docs/fund-your-contract -----               *
-     *                                                                                  *
-     ************************************************************************************/
     function requestPriceData() public returns (bytes32 requestId)
     {
         Chainlink.Request memory request = buildChainlinkRequest(jobId, address(this), this.fulfill.selector);
@@ -83,8 +63,7 @@ contract PriceExercise is ChainlinkClient {
      */
     function fulfill(bytes32 _requestId, int256 _price) public recordChainlinkFulfillment(_requestId)
     {
-       storedPrice = _price;
-       if (getLatestPrice() > storedPrice) {
+       if (getLatestPrice() > _price) {
            priceFeedGreater = true;
        } else {
            priceFeedGreater = false;

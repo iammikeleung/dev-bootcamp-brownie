@@ -3,27 +3,27 @@ import pytest
 from brownie import PriceExercise, network
 from scripts.helpful_scripts import LOCAL_BLOCKCHAIN_ENVIRONMENTS, get_account
 from scripts.helpful_scripts import get_contract
- 
+
 @pytest.fixture
-
-
 def deploy_price_exercise(get_job_id, chainlink_fee):
     # Arrange
-    address = '0x9326BFA02ADD2366b30bacB125260Af641031331'
+    #address = '0x9326BFA02ADD2366b30bacB125260Af641031331'
     # Arrange / Act
     price_exercise = PriceExercise.deploy(
         get_contract("oracle").address,
         get_job_id,
         chainlink_fee,
         get_contract("link_token").address,
-        address,
+        get_contract("btc_usd_price_feed"),
         {"from": get_account()},
     )
     # Assert
     assert price_exercise is not None
     return price_exercise
+
  
  
+
 def test_send_api_request_local(
     deploy_price_exercise,
     chainlink_fee,
@@ -33,7 +33,7 @@ def test_send_api_request_local(
     if network.show_active() not in LOCAL_BLOCKCHAIN_ENVIRONMENTS:
         pytest.skip("Only for local testing")
     price_exercise = deploy_price_exercise
-    get_link_token.transfer(
+    get_contract("link_token").transfer(
         price_exercise.address, chainlink_fee * 2, {"from": get_account()}
     )
     # Act

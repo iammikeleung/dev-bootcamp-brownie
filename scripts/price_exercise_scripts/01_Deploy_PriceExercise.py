@@ -22,6 +22,9 @@ def deploy_price_exercise():
         eth_usd_price_feed = config["networks"][network.show_active()][
             "eth_usd_price_feed"
         ]
+        btc_usd_price_feed = config["networks"][network.show_active()][
+            "btc_usd_price_feed"
+        ]
         oracle = config["networks"][network.show_active()]["oracle"]
         link_token = config["networks"][network.show_active()]["link_token"]
     price_exercise = PriceExercise.deploy(
