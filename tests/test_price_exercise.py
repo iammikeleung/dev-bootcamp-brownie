@@ -40,7 +40,7 @@ def test_send_api_request_local(
     transaction_receipt = price_exercise.requestPriceData({"from": get_account()})
     requestId = transaction_receipt.events["ChainlinkRequested"]["id"]
     # Assert
-    get_contract.fulfillOracleRequest(requestId, get_data, {"from": get_account()})
+    get_contract("oracle").fulfillOracleRequest(requestId, get_data, {"from": get_account()})
     assert isinstance(price_exercise.priceFeedGreater(), bool)
  
  
@@ -70,7 +70,7 @@ def test_can_get_latest_price(get_job_id, chainlink_fee):
         get_job_id,
         chainlink_fee,
         get_contract("link_token").address,
-        address,
+        get_contract("btc_usd_price_feed"),
         {"from": get_account()},
     )
     # price_exercise = deploy_price_exercise

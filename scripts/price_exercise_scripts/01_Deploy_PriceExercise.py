@@ -17,6 +17,7 @@ def deploy_price_exercise():
             deploy_mocks()
         oracle = MockOracle[-1].address
         link_token = LinkToken[-1].address
+        btc_usd_price_feed = MockV3Aggregator[-1].address
         eth_usd_price_feed = MockV3Aggregator[-1].address
     else:
         eth_usd_price_feed = config["networks"][network.show_active()][
@@ -32,7 +33,7 @@ def deploy_price_exercise():
         jobId,
         fee,
         link_token,
-        eth_usd_price_feed,
+        btc_usd_price_feed,
         {"from": account},
         publish_source=get_verify_status(),
     )
